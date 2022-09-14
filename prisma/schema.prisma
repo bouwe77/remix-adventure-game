@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Game {
+  id                String   @id @default(uuid())
+  currentLocation   Location @relation("currentLocation", fields: [currentLocationId], references: [id])
+  currentLocationId String
+}
+
+model Location {
+  id           String        @id @default(uuid())
+  name         String
+  description  String
+  origins      Destination[] @relation("fromLocation")
+  destinations Destination[] @relation("toLocation")
+  Game         Game[]        @relation("currentLocation")
+}
+
+model Destination {
+  id             String   @id @default(uuid())
+  name           String
+  description    String
+  fromLocation   Location @relation("fromLocation", fields: [fromLocationId], references: [id])
+  fromLocationId String
+  toLocation     Location @relation("toLocation", fields: [toLocationId], references: [id])
+  toLocationId   String
+}
